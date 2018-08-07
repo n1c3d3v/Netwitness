@@ -1,0 +1,14 @@
+This file was created to explain details about the Parser "basestrike.lua".
+
+
+Parser details:
+
+Name: basestriker.lua.
+Language: lua, Version 5.1.4.
+Metakeys generated: basehref.tag, basehref.value, basehref.full.
+Status: Done. Maybe will need nome more testing.
+Production: No.
+Description: The "Basestrike.lua" parser was made to detect the "basestriker" attack. This attack uses the "base" tag on html fooling security solutions and successfully send malicious mail messages.
+The parser was created based on the existance of the "<base" token, once the token is found the URL is parsed and joined with the content of the next "<a href" tag. Very helpfull as an alternative extract some intersting values from headers inside mail messages, and populate it inside a specific metakey. That info is very helpfull to detect possible phishing attempts( after a good WL is created )
+
+Due to the fact that this parser was designed to parser Mail content, it is only on the MM Decoder, as it receives SMTP traffic to be parsed.
