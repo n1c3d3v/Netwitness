@@ -1,0 +1,66 @@
+from pcap_reassembler import PcapReassembler, address_to_string 
+import requests
+from BaseHTTPServer import BaseHTTPRequestHandler, HTTPServer
+from requests.auth import HTTPBasicAuth
+import ssl
+import BaseHTTPServer
+
+
+#parse email extract raw file, and save it
+def mail_extractor(filename):
+	reassembler = PcapReassembler() 
+	messages = reassembler.load_pcap('./testete.pcap') 
+	i = 0 
+
+	for i in range(len(messages)):
+		
+		if ("From: " in messages[i].payload and "\r\n.\r\n" in messages[i].payload):
+			result = messages[i].payload
+			   
+			break
+		if ("From: " in messages[i].payload or "DATA" in messages[i].payload) and "\r\n.\r\n" not in messages[i].payload:
+			result = str(messages[i].payload)
+			
+			while "\r\n.\r\n" not in messages[i].payload:
+				i = i + 1
+				result = result + str(messages[i].payload)
+			break
+	
+	# save raw mail as eml file
+	file = open(str(filename) + '.eml','w') 
+	file.write(result) 
+	file.close()
+			
+
+
+
+#extrating pcaps from decoder
+def pcap_extractor(sessionid):
+	a = requests.get('http://10.224.208.117:50105/sdk/packets?&sessions=' + str(sessionid), auth=HTTPBasicAuth('admin', 'netwitness'))
+	pcapdec = a.content
+	filep = open('testete.pcap', 'w')
+	filep.close()
+	filep =	open('testete.pcap', 'w')
+	filep.write(a.content)
+	filep.close()
+	# send pcap to be parsed and after that save the raw mail as eml file
+	mail_extractor(str(sessionid))
+	
+
+
+#server to handle request from context menu action, the request is parsed(to get the sessionid) and sent to the pcap_extractor function as a parametrer
+class S(BaseHTTPRequestHandler):
+           	
+	def do_GET(self):
+        	self.send_response(200)
+		sessionid=self.path.split("%")
+		print(str(sessionid))
+		pcap_extractor(sessionid[1])
+		#self.close()	
+	def log_message(self, format, *args):
+        	return   
+        
+httpd = BaseHTTPServer.HTTPServer(('10.224.210.10', 4443), S)
+httpd.socket = ssl.wrap_socket (httpd.socket, keyfile='./server.key' ,certfile='./server.crt', server_side=True)
+httpd.serve_forever()
+

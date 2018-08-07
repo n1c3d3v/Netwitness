@@ -1,0 +1,10 @@
+Metadata-Version: 1.0
+Name: pcap-reassembler
+Version: 0.1
+Summary: Reassembles UDP/TCP packets into application layer messages
+Home-page: https://github.com/FredrikAppelros/pcap-reassembler
+Author: Fredrik Appelros, Carl Ekerot
+Author-email: fredrik.appelros@gmail.com, kalle@implode.se
+License: UNKNOWN
+Description: UNKNOWN
+Platform: UNKNOWN

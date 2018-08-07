@@ -1,0 +1,50 @@
+RCPT TO:<badbro@lab.local>
+DATA
+250 2.1.5 Ok
+354 End data with <CR><LF>.<CR><LF>
+To: badbro@lab.local
+From: badbro <badbro@lab.local>
+Subject: test basestrike
+Message-ID: <d6d53408-b963-d199-41fa-460de988c5ae@lab.local>
+Date: Mon, 16 Jul 2018 15:34:40 -0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
+MIME-Version: 1.0
+Content-Type: multipart/alternative;
+ boundary="------------8B608B8463216D7E50D5BBEB"
+Content-Language: en-US
+
+This is a multi-part message in MIME format.
+--------------8B608B8463216D7E50D5BBEB
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+
+teste basestriker
+
+Href is here link </google>
+
+
+--------------8B608B8463216D7E50D5BBEB
+Content-Type: text/html; charset=utf-8
+Content-Transfer-Encoding: 7bit
+
+<html>
+  <head>
+
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  </head>
+  <body text="#000000" bgcolor="#FFFFFF">
+    <p>
+      <meta http-equiv="content-type" content="text/html; charset=utf-8">
+    </p>
+    <p>
+      <title>teste basestriker</title>
+      <p> <base href="http://google.com"> Href is here <a
+          href="/google"> link</a> </p>
+    </p>
+  </body>
+</html>
+
+--------------8B608B8463216D7E50D5BBEB--
+.
+QUIT

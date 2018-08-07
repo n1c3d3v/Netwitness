@@ -1,0 +1,91 @@
+import logging
+from pcap_reassembler import PcapReassembler, address_to_string 
+import requests
+from requests.auth import HTTPBasicAuth
+import SimpleHTTPServer
+import SocketServer
+import ssl
+import BaseHTTPServer
+
+
+#parse email extract raw file, and save it
+def mail_extractor(pcapfile,filename):
+	reassembler = PcapReassembler()
+# temporary  file to write the pcap from sa
+	#pcapname = './pcap/temp.pcap'
+        #file = open(pcapname, 'w').close()
+        #file = open(pcapname, 'w')
+        #file.write(pcapfile)
+        #file.close()
+ 
+	messages = reassembler.load_pcap(pcapfile) 
+	i = 0 
+
+	for i in range(len(messages)):
+		
+		if ("From: " in messages[i].payload and "\r\n.\r\n" in messages[i].payload):
+			result = messages[i].payload
+			   
+			break
+		if ("From: " in messages[i].payload or "DATA" in messages[i].payload) and "\r\n.\r\n" not in messages[i].payload:
+			result = str(messages[i].payload)
+			
+			while "\r\n.\r\n" not in messages[i].payload:
+				i = i + 1
+				result = result + str(messages[i].payload)
+			break
+	
+	# save raw mail as eml file
+	file = open('./emlfiles/' + str(filename) + '.eml','w') 
+	file.write(result) 
+	file.close()
+			
+
+
+
+#extrating pcaps from decoder
+def pcap_extractor(sessionid):
+	a = requests.post('http://10.224.208.117:50105/sdk/packets?&sessions=' + str(sessionid), auth=HTTPBasicAuth('admin', 'netwitness'))
+	a = requests.get('http://10.224.208.117:50105/sdk/packets?&sessions=' + str(sessionid), auth=HTTPBasicAuth('admin', 'netwitness'))
+	pcapdec = a.content
+	# Save the pcap to be loaded on the reassembler function
+	basepcap = 'testete.pcap'
+	file = open(basepcap, 'w').close()
+ 	file = open(basepcap, 'w')
+ 	file.write(pcapdec)
+ 	file.close()
+	
+	
+	# send pcap to be parsed and after that save the raw mail as eml file
+	mail_extractor(basepcap,str(sessionid))
+	
+
+
+#server to handle request from context menu action, the request is parsed(to get the sessionid) and sent to the pcap_extractor function as a parametrer
+
+
+
+
+
+
+class FakeRedirect(SimpleHTTPServer.SimpleHTTPRequestHandler):
+   def do_GET(self):
+       logging.error(session.headers)
+       sessionid=self.path.split("%")
+       pcap_extractor(str(sessionid[1]))
+       self.send_response(301)
+       new_path = '%s%s'%('http://10.224.210.10:8081', '/' + str(sessionid[1]) + '.eml')
+       self.send_header('Location', new_path)
+       self.send_header("Cache-Control", "no-cache, no-store, must-revalidate")
+       self.send_header("Pragma", "no-cache")
+       self.send_header("Expires", "0")
+       self.end_headers()
+
+
+
+
+
+httpd = BaseHTTPServer.HTTPServer(('10.224.210.10', 88), FakeRedirect)
+httpd.socket = ssl.wrap_socket (httpd.socket, keyfile='./server.key' ,certfile='./server.crt', server_side=True)
+httpd.serve_forever()
+

@@ -1,0 +1,5 @@
+('/root/auto_version.py/build/auto/pcap_reassembler-0.1-py2.7.egg',
+ None,
+ set(['*.py', '*.pyc', '*.pyd', '*.pyo', '*.so', 'EGG-INFO']),
+ 'DATA',
+ [])
