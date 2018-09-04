@@ -7,7 +7,7 @@ nwlanguagekey.create("basehref.full"),
 
 
 function basestrike:basexist(token, first, last)
-local payload = nw.getPayload( 1, 50000 )
+local payload = nw.getPayload( 1, last + 200 )
 local endmtoken = payload:find("=", last - 2, last + 4)
 local bvalue = payload:find(">", endmtoken + 2, endmtoken +100)
 
@@ -26,7 +26,7 @@ end
 
 function basestrike:hrefexist(token, first, last)
 nw.logInfo("encontrei o token")
-local payload = nw.getPayload( 1, 50000 )
+local payload = nw.getPayload( 1, last + 200 )
 local endmtoken = payload:find("href=", last, last + 20)
 local bvalue2 = payload:find(">", endmtoken + 6 , endmtoken + 100)
 
